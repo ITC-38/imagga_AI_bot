@@ -12,13 +12,11 @@ class ImaggaColorsEndpoint(BaseImaggaManager):
     def send_photo_bytes(self, photo: bytes) -> dict | Response:
         return self.define_photo_request(
             photo,
-            self.API_COLORS_BASE_URL,
-            return_face_id=True
+            self.API_COLORS_BASE_URL
         )
 
     def send_photo_url(self, photo_url: str) -> dict | Response:
         return self.define_photo_request(
             photo_url,
-            self.API_COLORS_BASE_URL,
-            return_face_id=True
+            self.API_COLORS_BASE_URL
         )
