@@ -1,7 +1,6 @@
-from io import BytesIO
 from typing import Union
 
-from requests import Session, Response
+from requests import Session
 
 
 class BaseImaggaManager(Session):
