@@ -1,5 +1,3 @@
-from io import BytesIO
-
 from .base import BaseImaggaManager
 
 
@@ -9,7 +7,7 @@ class ImaggaBarcodesEndpoint(BaseImaggaManager):
         super().__init__(api_key, api_secret, lang)
         self.API_BARCODES_BASE_URL = self.API_BASE_URL + '/barcodes'
 
-    def send_photo_bytes(self, photo: BytesIO) -> dict | int:
+    def send_photo_bytes(self, photo: bytes) -> dict | int:
         return self.define_photo_request(
             photo,
             self.API_BARCODES_BASE_URL,

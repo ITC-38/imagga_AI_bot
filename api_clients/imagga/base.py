@@ -25,10 +25,10 @@ class BaseImaggaManager(Session):
         return self.__api_secret
 
     def define_photo_request(self,
-                             photo: Union[BytesIO, str],
+                             photo: Union[bytes, str],
                              endpoint_url: str,
-                             **params) -> dict | int:
-        if isinstance(photo, BytesIO):
+                             **params) -> dict | int | str:
+        if isinstance(photo, bytes):
             params['image'] = photo
             params['language'] = self.lang
             response = self.post(
@@ -37,7 +37,7 @@ class BaseImaggaManager(Session):
                 headers=self.headers,
                 auth=(self.api_key, self.api_secret)
             )
-        else:
+        elif isinstance(photo, str):
             params['image_url'] = photo
             params['language'] = self.lang
             response = self.get(
@@ -46,6 +46,8 @@ class BaseImaggaManager(Session):
                 headers=self.headers,
                 auth=(self.api_key, self.api_secret)
             )
+        else:
+            return 'ГАВНО!'
         if response.status_code in [200, 201]:
             return response.json()
         return response.status_code

@@ -1,5 +1,3 @@
-from io import BytesIO
-
 from .base import BaseImaggaManager
 
 
@@ -9,7 +7,7 @@ class ImaggaFaceDetectionsEndpoint(BaseImaggaManager):
         super().__init__(api_key, api_secret, lang)
         self.FACE_DETECTIONS_BASE_URL = self.API_BASE_URL + '/faces/detections'
 
-    def send_photo_bytes(self, photo: BytesIO) -> dict | int:
+    def send_photo_bytes(self, photo: bytes) -> dict | int:
         return self.define_photo_request(
             photo,
             self.FACE_DETECTIONS_BASE_URL,

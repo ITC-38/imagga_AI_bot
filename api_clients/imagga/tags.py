@@ -9,7 +9,7 @@ class ImaggaTagsEndpoint(BaseImaggaManager):
         super().__init__(api_key, api_secret, lang)
         self.API_TAGS_BASE_URL = self.API_BASE_URL + '/tags'
 
-    def send_photo_bytes(self, photo: BytesIO) -> dict | int:
+    def send_photo_bytes(self, photo: bytes) -> dict | int:
         return self.define_photo_request(
             photo,
             self.API_TAGS_BASE_URL
