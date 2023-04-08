@@ -5,10 +5,13 @@ from aiogram.types import Message, ReplyKeyboardRemove, ContentType, InputFile
 
 from api_clients.imagga.tags import ImaggaTagsEndpoint
 from commands import Commands
-from config import IMAGGA_PHOTOS_DIR
 from keyboards.reply import START_COMMANDS_KEYBOARD
 from loader import dp
 from misc.states import GetPhotoObjectState
+from misc.utils import (
+    photo_today_file_path, http_link_validator, photo_format_validator,
+    imagga_success_response
+)
 
 
 @dp.message_handler(text=Commands.get_obj.value)
@@ -23,12 +26,14 @@ async def get_photo_object_command(message: Message):
 @dp.message_handler(content_types=[ContentType.PHOTO], state=GetPhotoObjectState.send_photo)
 async def get_photo_object(message: Message, state: FSMContext):
     file = await message.photo[0].get_file()
-    file_format = file.values['file_path'].split('.')[-1]
-    date_name = datetime.datetime.now()
+    date_obj = datetime.datetime.now()
+    photo_file_path = photo_today_file_path(
+        date_obj,
+        file.values['file_path']
+    )
     file_obj = await message.bot.download_file_by_id(
         file.file_id,
-        f'{IMAGGA_PHOTOS_DIR}/{date_name.date()}/'
-        f'photo_{date_name.time().__str__().replace(":", "-")}.{file_format}'
+        photo_file_path
     )
     loader = ImaggaTagsEndpoint(
         message.bot['config']['imagga_api_key'],
@@ -41,8 +46,8 @@ async def get_photo_object(message: Message, state: FSMContext):
     with open(file_obj.name, 'rb') as file:
         content = file.read()
     response = loader.send_photo_bytes(content)
-    if isinstance(response, (int, str)):
-        await message.answer(f'Что-то пошло не так... Код ошибки: {response}')
+    if not imagga_success_response(response):
+        await message.answer(f'Что-то пошло не так... Код ошибки: {response.status_code}')
     else:
         object_dict = response["result"]["tags"][0]
         await message.bot.send_photo(
@@ -58,7 +63,7 @@ async def get_photo_object(message: Message, state: FSMContext):
 
 @dp.message_handler(content_types=[ContentType.TEXT], state=GetPhotoObjectState.send_photo)
 async def get_photo_object(message: Message, state: FSMContext):
-    if not message.text.startswith(('http:', 'https:')) or message.text.split('.')[-1].lower() not in ['jpg', 'png', 'jpeg']:
+    if not http_link_validator(message.text) or not photo_format_validator(message.text):
         await message.answer('Дурак-простак, введи прямую ссылку на файл')
         return
     loader = ImaggaTagsEndpoint(
@@ -70,8 +75,8 @@ async def get_photo_object(message: Message, state: FSMContext):
         reply_markup=START_COMMANDS_KEYBOARD
     )
     response = loader.send_photo_bytes(message.text)
-    if isinstance(response, (int, str)):
-        await message.answer(f'Что-то пошло не так... Код ошибки: {response}')
+    if not imagga_success_response(response):
+        await message.answer(f'Что-то пошло не так... Код ошибки: {response.status_code}')
     else:
         object_dict = response["result"]["tags"][0]
         await message.answer(
