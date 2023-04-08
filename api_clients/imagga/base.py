@@ -1,6 +1,6 @@
 from typing import Union
 
-from requests import Session
+from requests import Session, Response
 
 
 class BaseImaggaManager(Session):
@@ -26,7 +26,7 @@ class BaseImaggaManager(Session):
     def define_photo_request(self,
                              photo: Union[bytes, str],
                              endpoint_url: str,
-                             **params) -> dict | int | str:
+                             **params) -> dict | Response | str:
         if isinstance(photo, bytes):
             params['image'] = photo
             params['language'] = self.lang
@@ -46,7 +46,7 @@ class BaseImaggaManager(Session):
                 auth=(self.api_key, self.api_secret)
             )
         else:
-            return 'ГАВНО!'
+            return 'Bad photo content!'
         if response.status_code in [200, 201]:
             return response.json()
-        return response.status_code
+        return response

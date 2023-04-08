@@ -1,3 +1,5 @@
+from requests import Response
+
 from .base import BaseImaggaManager
 
 
@@ -7,7 +9,7 @@ class ImaggaFaceSimilarityEndpoint(BaseImaggaManager):
         super().__init__(api_key, api_secret, lang)
         self.FACE_SIMILARITY_BASE_URL = self.API_BASE_URL + '/faces/similarity'
 
-    def get_face_similarity_data(self, face_id: str, second_face_id: str) -> dict | int:
+    def get_face_similarity_data(self, face_id: str, second_face_id: str) -> dict | Response:
         response = self.get(
             self.FACE_SIMILARITY_BASE_URL,
             params={
@@ -20,4 +22,4 @@ class ImaggaFaceSimilarityEndpoint(BaseImaggaManager):
         )
         if response.status_code == 200:
             return response.json()
-        return response.status_code
+        return response
