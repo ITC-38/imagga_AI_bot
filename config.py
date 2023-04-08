@@ -9,7 +9,7 @@ MEDIA_DIR = BASE_DIR / 'media'
 IMAGGA_PHOTOS_DIR = MEDIA_DIR / 'imagga'
 
 
-def load_config(env_path: str):
+def load_config(env_path: str) -> dict:
     load_dotenv(env_path)
     return {
         'bot_token': os.getenv('BOT_TOKEN'),
