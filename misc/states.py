@@ -11,3 +11,8 @@ class ScanQRState(StatesGroup):
 
 class ScanColorsState(StatesGroup):
     send_photo = State()
+
+
+class FaceSimilarityState(StatesGroup):
+    send_photo_1 = State()
+    send_photo_2 = State()
