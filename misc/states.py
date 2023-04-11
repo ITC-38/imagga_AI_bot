@@ -7,3 +7,7 @@ class GetPhotoObjectState(StatesGroup):
 
 class ScanQRState(StatesGroup):
     send_photo = State()
+
+
+class ScanColorsState(StatesGroup):
+    send_photo = State()
